@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#map {
+min-height: 500px;
+width: 100%;
+}
+
+@media only screen
+  and (min-device-width: 414px)
+  and (max-device-width: 736px)
+  and (-webkit-min-device-pixel-ratio: 3) {
+    #map {
+      min-height: 100em;
+        width: 100%;
+
+    }
+}
+@media only screen
+  and (min-device-width: 375px)
+  and (max-device-width: 667px)
+  and (-webkit-min-device-pixel-ratio: 2) {
+    #map {
+      min-height: 100em;
+        width: 100%;
+
+    }
+}
+@media only screen
+  and (min-device-width: 320px)
+  and (max-device-width: 568px)
+  and (-webkit-min-device-pixel-ratio: 2) {
+     #map {
+      min-height: 100em;
+        width: 100%;
+
+    }
+}
+</style>
+</head>
+<body>
+<img src="/SOLDHEADER.png" id="header">
+<div id="map"></div>
+<script>
+
+var userLocation = function() {
+var coords = {}
+function handleGetCurrentPosition(location){
+  var latitude = location.coords.latitude;
+  var longitude = location.coords.longitude;
+  coords.lat = 39.0997
+  coords.lng = -94.5786
+}
+var place = navigator.geolocation.getCurrentPosition(handleGetCurrentPosition)
+return coords
+};
+
+var mapLocation = userLocation()
+
+
+function initMap() {
+var uluru = {lat: 40, lng: -87.6298};
+console.log(userLocation())
+var map = new google.maps.Map(document.getElementById('map'), {
+  zoom: 15,
+  center: {lat: 39.0997, lng: -94.5772},
+});
+
+
+
+
+<% @places.each do |place| %>
+<% if place.latitude && place.longitude %>
+  var uluru = {lat: <%= place.latitude %>, lng: <%= place.longitude %>}
+  var marker = new google.maps.Marker({
+    position: uluru,
+    map: map,
+    id: "hey",
+    title: '<%= place.title %>',
+    comment: 'KC Code'
+  });
+  var infowindow = new google.maps.InfoWindow();
+  google.maps.event.addListener(marker, 'click', function() {
+    var a = $("div[title='<%= place.title %>']")
+    console.log('<%= place.title %>')
+    infowindow.setContent('<div><strong>' + '<%= place.title %>' + '</strong><br>' +
+    'Place ID: <%= place.id %>');
+    infowindow.open(map, this);
+  });
+  <% end %>
+  <% end  %>
+  //   map.addListener('center_changed', function() {
+    //   // 3 seconds after the center of the map has changed, pan back to the
+    //   // marker.
+    //   window.setTimeout(function() {
+      //   console.log(mapLocation)
+      //   var lat = mapLocation.lat
+      //   var lng = mapLocation.lng
+      //   var center = {lat: 41.8781, lng: -87.6298}
+
+
+      //     map.panTo(center);
+
+    //   }, 20000);
+  // });
+
+  marker.addListener('click', function() {
+    map.setZoom(12);
+    console.log(marker.getCurrentPosition())
+    map.setCenter(marker.getPosition());
+  });
+
+
+}
+
+</script>
+<br><br>
+ <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMA8dq5ARa52eDSwdo1gJBr4ZNOu-DAqY&callback=initMap"
+    async defer></script>
+</script>
+</body>
+</html>
+
+
+
+
