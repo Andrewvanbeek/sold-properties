@@ -5,3 +5,8 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+require 'csv'
+
+places = CSV.read("public/places.csv", :headers => true)
+places = places[1..-1]
+places.each {|place| Place.create(latitude: place["latitude"], longitude: place["longitude"], title: place["title"])}
