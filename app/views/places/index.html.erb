@@ -41,27 +41,22 @@ width: 100%;
 </head>
 <body>
 <img src="/SOLDHEADER.png" id="header">
+<br><select name="cars" id="years" onchange="filterMarkers();">
+  <option value="show all">show all</option>
+  <option value="2012">2012</option>
+  <option value="2013">2013</option>
+  <option value="2014">2014</option>
+  <option value="2015">2015</option>
+</select><br>
 <div id="map"></div>
 <script>
 
-var userLocation = function() {
-var coords = {}
-function handleGetCurrentPosition(location){
-  var latitude = location.coords.latitude;
-  var longitude = location.coords.longitude;
-  coords.lat = 39.0997
-  coords.lng = -94.5786
-}
-var place = navigator.geolocation.getCurrentPosition(handleGetCurrentPosition)
-return coords
-};
 
-var mapLocation = userLocation()
+
+
 
 
 function initMap() {
-var uluru = {lat: 40, lng: -87.6298};
-console.log(userLocation())
 var map = new google.maps.Map(document.getElementById('map'), {
   zoom: 15,
   center: {lat: 39.0997, lng: -94.5772},
@@ -69,7 +64,7 @@ var map = new google.maps.Map(document.getElementById('map'), {
 
 
 
-
+var markerArray = []
 <% @places.each do |place| %>
 <% if place.latitude && place.longitude %>
   var uluru = {lat: <%= place.latitude %>, lng: <%= place.longitude %>}
@@ -78,8 +73,10 @@ var map = new google.maps.Map(document.getElementById('map'), {
     map: map,
     id: "hey",
     title: '<%= place.title %>',
-    comment: 'KC Code'
+    icon: '/' + '<%= place.date %>' + '.png',
+    comment: 'KC Code',
   });
+  markerArray.push(marker)
   var infowindow = new google.maps.InfoWindow();
   google.maps.event.addListener(marker, 'click', function() {
     var a = $("div[title='<%= place.title %>']")
@@ -90,20 +87,6 @@ var map = new google.maps.Map(document.getElementById('map'), {
   });
   <% end %>
   <% end  %>
-  //   map.addListener('center_changed', function() {
-    //   // 3 seconds after the center of the map has changed, pan back to the
-    //   // marker.
-    //   window.setTimeout(function() {
-      //   console.log(mapLocation)
-      //   var lat = mapLocation.lat
-      //   var lng = mapLocation.lng
-      //   var center = {lat: 41.8781, lng: -87.6298}
-
-
-      //     map.panTo(center);
-
-    //   }, 20000);
-  // });
 
   marker.addListener('click', function() {
     map.setZoom(12);
@@ -111,8 +94,25 @@ var map = new google.maps.Map(document.getElementById('map'), {
     map.setCenter(marker.getPosition());
   });
 
+filterMarkers = function () {
+var option = $("#years").val()
+markerArray.forEach(function(marker) {
+  console.log(marker.icon)
+  if(option === "show all"){
+    marker.setVisible(true)
+  } else if(marker.icon != "/" + option + ".png"){
+    marker.setVisible(false)
+  }
+  else if(marker.icon === "/" + option + ".png") {
+    marker.setVisible(true);
+  }
+})
+}
+
 
 }
+
+
 
 </script>
 <br><br>
